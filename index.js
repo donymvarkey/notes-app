@@ -1,5 +1,5 @@
+require("dotenv").config();
 const Server = require("./src/Server");
-const dotenv = require("dotenv").config();
 
 const options = {
   port: process.env.PORT,
