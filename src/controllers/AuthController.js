@@ -78,7 +78,7 @@ const login = async (req, res, next) => {
 
     const profile = await UserProfile.findOne({ userid: isUserExists._id });
 
-    const data = {
+    const signingData = {
       userid: isUserExists._id,
       profileId: profile._id,
       firstName: profile.firstName,
@@ -87,11 +87,13 @@ const login = async (req, res, next) => {
       email: isUserExists.email,
     };
 
-    const token = jwt.sign(data, process.env.SIGNATURE);
+    const token = jwt.sign(signingData, process.env.SIGNATURE);
 
-    data["token"] = token;
-
-    returnResponse({ code: 200, msg: "Login successful", data: data }, res);
+    returnResponse({
+      code: 200, msg: "Login successful", data: {
+        access_token: token
+      }
+    }, res);
   } catch (error) {
     next(error);
   }
