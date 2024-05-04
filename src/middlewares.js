@@ -7,7 +7,7 @@ module.exports = {
     res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS");
     res.header(
       "Access-Control-Allow-Headers",
-      "Origin, x-auth-token, X-Requested-With, Content-Type"
+      "Origin, Authorization, X-Requested-With, Content-Type"
     );
 
     // intercept OPTIONS method
@@ -20,7 +20,8 @@ module.exports = {
   },
 
   isAuthorised: function (req, res, next) {
-    var verificationHeader = req.headers["x-auth-token"];
+    console.log("headers ==>", req.headers);
+    var verificationHeader = req.headers["authorization"]?.split(" ")[1];
     var verify;
 
     if (
@@ -43,7 +44,7 @@ module.exports = {
   },
 
   isAdmin: function (req, res, next) {
-    let verificationHeader = req.headers["x-auth-token"];
+    let verificationHeader = req.headers["authorization"];
 
     try {
       let verify = jwt.verify(verificationHeader, process.env.SIGNATURE);

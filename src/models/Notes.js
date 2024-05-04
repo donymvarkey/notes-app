@@ -2,13 +2,9 @@ const mongoose = require("mongoose");
 
 const Notes = new mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-  userProfileId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "UserProfile",
-    required: true,
-  },
-  note: { type: String, required: true },
-  file: { type: String },
+  title: { type: String, required: true },
+  text: { type: String, required: true },
+  createdAt: { type: Date, default: Date.now() },
 });
 
 module.exports = mongoose.model("Notes", Notes);

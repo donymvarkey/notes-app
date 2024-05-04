@@ -2,22 +2,22 @@ const NotesModel = require("../models/Notes");
 const returnResponse = require("../utils/response/ResponseHandler");
 
 const createNote = async (req, res, next) => {
-  const { note } = req.body;
-  const { userid, profileId } = req.user;
-  if (!note) {
+  const { text, title } = req.body;
+  const { user_id } = req.user;
+  if (!text || !title) {
     return returnResponse(
-      { code: 400, msg: "Note is required", data: null },
+      { code: 400, msg: "All fields are required", data: null },
       res
     );
   }
   try {
-    const n = new NotesModel({
-      userId: userid,
-      userProfileId: profileId,
-      note,
+    const noteData = new NotesModel({
+      userId: user_id,
+      title,
+      text,
     });
 
-    const data = await n.save();
+    const data = await noteData.save();
 
     if (data) {
       return returnResponse(
@@ -35,9 +35,9 @@ const createNote = async (req, res, next) => {
 };
 
 const getAllNotes = async (req, res, next) => {
-  const { userid } = req.user;
+  const { user_id } = req.user;
   try {
-    const notes = await NotesModel.find({ userId: userid });
+    const notes = await NotesModel.find({ userId: user_id });
     if (notes) {
       return returnResponse(
         { code: 200, msg: "Notes fetched successfully", data: notes },
@@ -51,9 +51,9 @@ const getAllNotes = async (req, res, next) => {
 
 const getNote = async (req, res, next) => {
   const { id } = req.params;
-  const { userid } = req.user;
+  const { user_id } = req.user;
   try {
-    const data = await NotesModel.findOne({ _id: id, userId: userid });
+    const data = await NotesModel.findOne({ _id: id, userId: user_id });
     if (data) {
       return returnResponse(
         { code: 200, msg: "Note fetched successfully", data: data },
@@ -71,8 +71,8 @@ const getNote = async (req, res, next) => {
 
 const updateNote = async (req, res, next) => {
   const { id } = req.params;
-  const { note } = req.body;
-  if (!note) {
+  const { text } = req.body;
+  if (!text) {
     return returnResponse(
       { code: 400, msg: "Note is required", data: null },
       res
@@ -83,7 +83,7 @@ const updateNote = async (req, res, next) => {
       id,
       {
         $set: {
-          note,
+          text,
         },
       },
       {

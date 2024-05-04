@@ -5,9 +5,9 @@ const returnResponse = require("../utils/response/ResponseHandler");
 const { hashPassword, comparePassword } = require("../utils/utils");
 
 const register = async (req, res, next) => {
-  const { firstName, lastName, address, email, password } = req.body;
+  const { name, email, password } = req.body;
 
-  if (!firstName || !lastName || !email || !address || !password) {
+  if (!name || !email || !password) {
     return returnResponse(
       { code: 400, msg: "Please enter all data", data: null },
       res
@@ -24,18 +24,10 @@ const register = async (req, res, next) => {
 
     const hashedPassword = hashPassword(password);
 
-    const user = new User({ email, password: hashedPassword });
-    const u = await user.save();
+    const user = new User({ name, email, password: hashedPassword });
+    const data = await user.save();
 
-    const profile = new UserProfile({
-      firstName,
-      lastName,
-      address,
-      userid: u._id,
-    });
-    const p = await profile.save();
-
-    if (u && p) {
+    if (data) {
       return returnResponse(
         { code: 200, msg: "User registered successfully.", data: null },
         res
@@ -79,21 +71,26 @@ const login = async (req, res, next) => {
     const profile = await UserProfile.findOne({ userid: isUserExists._id });
 
     const signingData = {
-      userid: isUserExists._id,
-      profileId: profile._id,
-      firstName: profile.firstName,
-      lastName: profile.lastName,
-      address: profile.address,
-      email: isUserExists.email,
+      user_id: isUserExists._id,
     };
 
     const token = jwt.sign(signingData, process.env.SIGNATURE);
 
-    returnResponse({
-      code: 200, msg: "Login successful", data: {
-        access_token: token
-      }
-    }, res);
+    returnResponse(
+      {
+        code: 200,
+        msg: "Login successful",
+        data: {
+          access_token: token,
+          user: {
+            email: isUserExists?.email,
+            user_id: isUserExists?._id,
+            name: isUserExists?.name,
+          },
+        },
+      },
+      res
+    );
   } catch (error) {
     next(error);
   }

@@ -24,7 +24,7 @@ class Server {
     api.use(morgan("dev"));
 
     //echo route
-    api.use("/echo", function (req, res) {
+    api.use("/api/echo", function (req, res) {
       res.json({
         health: true,
       });
