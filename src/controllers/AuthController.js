@@ -149,9 +149,34 @@ const changePassword = async (req, res, next) => {
   }
 };
 
+const getUserDetails = async (req, res, next) => {
+  try {
+    const userDetails = await User.findById(req.user.user_id);
+    const dataReturns = {
+      name: userDetails?.name,
+      _id: userDetails?._id,
+      email: userDetails?.email,
+    };
+    if (userDetails) {
+      return returnResponse(
+        { code: 200, msg: "User details fetched", data: dataReturns },
+        res
+      );
+    } else {
+      return returnResponse(
+        { code: 400, msg: "Failed to fetch user details", data: null },
+        res
+      );
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   register,
   login,
   updateProfile,
   changePassword,
+  getUserDetails,
 };

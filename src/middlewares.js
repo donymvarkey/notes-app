@@ -20,7 +20,6 @@ module.exports = {
   },
 
   isAuthorised: function (req, res, next) {
-    console.log("headers ==>", req.headers);
     var verificationHeader = req.headers["authorization"]?.split(" ")[1];
     var verify;
 

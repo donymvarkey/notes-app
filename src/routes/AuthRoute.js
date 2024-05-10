@@ -15,5 +15,6 @@ router.put(
   middlewares.isAuthorised,
   AuthController.changePassword
 );
+router.get("/details", middlewares.isAuthorised, AuthController.getUserDetails);
 
 module.exports = router;
