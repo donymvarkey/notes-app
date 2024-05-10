@@ -70,8 +70,7 @@ const getNote = async (req, res, next) => {
 };
 
 const updateNote = async (req, res, next) => {
-  const { id } = req.params;
-  const { text } = req.body;
+  const { text, title, id } = req.body;
   if (!text) {
     return returnResponse(
       { code: 400, msg: "Note is required", data: null },
@@ -79,17 +78,12 @@ const updateNote = async (req, res, next) => {
     );
   }
   try {
-    const data = await NotesModel.findByIdAndUpdate(
-      id,
-      {
-        $set: {
-          text,
-        },
+    const data = await NotesModel.findByIdAndUpdate(id, {
+      $set: {
+        title,
+        text,
       },
-      {
-        new: true,
-      }
-    );
+    });
     if (data) {
       return returnResponse(
         { code: 200, msg: "Note updated successfully", data: data },
@@ -105,7 +99,7 @@ const updateNote = async (req, res, next) => {
   }
 };
 const deleteNote = async (req, res, next) => {
-  const { id } = req.params;
+  const { id } = req.body;
   try {
     const data = await NotesModel.findByIdAndDelete(id);
     if (data) {
