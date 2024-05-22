@@ -70,8 +70,11 @@ class Server {
         },
       });
     });
-    this.api.listen(this.options.port, () => {
-      logger.info(`Listening on http://127.0.0.1:${this.options.port}`);
+    const server = this.api.listen(this.options.port, () => {
+      const address = server.address();
+      const host = address.address === "::" ? "localhost" : address.address;
+      const port = address.port;
+      logger.info(`Listening on http://${host}:${port}`);
     });
   }
 }
